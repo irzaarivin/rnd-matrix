@@ -15,17 +15,27 @@ const routes = async (app, controllers) => {
     res.send(result);
   })
 
-  app.get('/join/:roomId', async (req, res) => {
-    const { roomId } = req.params;
- 
-    try {
-      await matrixController.joinRoom(roomId);
-      req.session.roomId = roomId;
-      res.redirect('/chat');
-    } catch (error) {
-      console.error(error);
-      res.status(500).send({error});
-    }
+  app.get('/createRoom/:roomName', async (req, res) => {
+    const roomName = req.params.roomName;
+  
+    await matrixController.createRoom({
+      room_alias_name: roomName
+    }).then((response) => {
+      res.send(response);
+    }).catch((error) => {
+      res.send(error);
+    });
+
+  });
+
+  app.get('/joinRoom/:roomId', async (req, res) => {
+  
+    await matrixController.joinRoom(req.params.roomId).then((response) => {
+      res.send(response);
+    }).catch((error) => {
+      res.send(error);
+    });
+
   });
 
   return app;
